@@ -163,11 +163,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-Private Sub cmbDriveList_Change()
-    Debug.Print Form1.cmbDriveList.Index
-End Sub
-
-
 
 Private Sub Drive1_Change()
     ' when the drive changes, set the directory box path to the new drive
@@ -209,8 +204,11 @@ Private Sub cmdNext_Click()
 End Sub
 
 Private Sub cmdNext2_Click()
+
+RemoteDrive = Replace(cmbDriveList.Text, ":\", "$")
 'Form1.txtcModPath.Text = "Program Files (x86)\Steam\steamapps\common\DayZ\!Workshop"
-strFullFilename = "\\" + txtcIPAdd.Text + "\" + cmbDriveList.Text + "\" + txtcModPath.Text
+strFullFilename = "\\" + txtcIPAdd.Text + "\" + RemoteDrive + "\" + txtcModPath.Text
+cModPath = strFullFilename
 Form1.txtdzmodinfo.Text = Form1.txtdzmodinfo.Text + "Client Mod Path: " & strFullFilename + vbCrLf
 Form1.cmdNext2.Visible = False
 Form1.cmdWrite.Visible = True
