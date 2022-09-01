@@ -1,3 +1,9 @@
 Attribute VB_Name = "Module1"
-Global SModPath As Variant
+Global sModPath As Variant
+Global cModPath As Variant
+Global ConfigFile As Variant
 
+
+
+
+Global strFullFilename As String
