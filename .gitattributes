@@ -1,0 +1,9 @@
+*.frm linguist-detectable=true
+*.frx linguist-detectable=true
+*.vbp linguist-detectable=true
+*.vbw linguist-detectable=true
+*.bas linguist-detectable=true
+*.js linguist-detectable=false
+*.java linguist-detectable=false
+*.html linguist-detectable=false
+*.xml linguist-detectable=false
