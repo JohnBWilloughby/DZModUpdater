@@ -187,9 +187,6 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
-
-
-
 Private Sub Drive1_Change()
     ' when the drive changes, set the directory box path to the new drive
     On Error GoTo DriveError
@@ -216,6 +213,7 @@ Private Sub cmdNext_Click()
     strFullFilename = Dir1.Path & "\" & File1.List(File1.ListIndex)
     Form1.txtdzmodinfo.Text = Form1.txtdzmodinfo.Text + "Server Mod Path: " & strFullFilename + vbCrLf
     sModPath = strFullFilename
+    FindTheMods = sModPath
     Call FindTheModFolders
     ' MsgBox "You selected " & strFullFilename
     Form1.lblServerModLoc.Caption = "DayZ Mod Location - Client"
@@ -239,26 +237,35 @@ cCompName = txtcIPAdd.Text
 'Form1.txtcModPath.Text = "Program Files (x86)\Steam\steamapps\common\DayZ\!Workshop"
 If PingIP(txtcIPAdd.Text) Then
     strFullFilename = "\\" + txtcIPAdd.Text + "\" + RemoteDrive + "\" + txtcModPath.Text
-    cModPath = strFullFilename
+    FindTheMods = strFullFilename
+    Call FindTheModFolders
+    cCompName = txtcIPAdd.Text
     Form1.txtdzmodinfo.Text = Form1.txtdzmodinfo.Text + "Client Mod Path: " & strFullFilename + vbCrLf
     Form1.txtdzmodinfo.Text = Form1.txtdzmodinfo.Text + vbCrLf + vbCrLf + sMessage
     Form1.cmdNext2.Visible = False
     Form1.cmdWrite.Visible = True
 Else
+    MsgBox "Unable to Find Client Computer", vbCritical
     End
 End If
 
 End Sub
 
 Private Sub cmdWrite_Click()
-   
-    
- Form1.cmdUpdate.Visible = True
+
+    Call WriteConfigtoFile
+    Form1.cmdUpdate.Visible = True
     
   
     
 End Sub
 
+Private Sub WriteConfigtoFile()
+
+' Write Configuration to File.
+
+
+End Sub
 Private Sub cmdClose_Click()
     
     Unload Form1
@@ -346,25 +353,27 @@ End Function
 
 Private Sub Command1_Click()
 Dim lret
-lret = MapNetworkDrive(Text1, "ABC", Text2, "Sorry")
+lret = MapNetworkDrive(WhattoMap, "", WheretoMap, "Sorry")
 End Sub
 
 Private Sub Command2_Click()
-DisconnectNetworkDrive Text2, 1, "Sorry"
+DisconnectNetworkDrive WheretoMap, 1, "Sorry"
 End Sub
 
 Private Sub ThisIsATest()
 Command1.Caption = "Connect Drive"
 Command2.Caption = "Release Drive"
-Text1.Text = "\\LAPTOP\C DRIVE"
+Text1.Text = "\\" + cCompName + "\" + cDriveLetter
+WhattoMap = Text1.Text
 Text2.Text = "U:"
+WheretoMap = Text2.Text
 End Sub
 
 
 ' ********************************************************
 Private Sub FindTheModFolders()
 Dim sFolder As String
-sFolder = Dir$(sModPath, vbDirectory)
+sFolder = Dir$(FindTheMods, vbDirectory)
 Debug.Print sModPath
 Debug.Print sFolder
 Do While sFolder <> ""
@@ -373,7 +382,5 @@ Do While sFolder <> ""
     End If
     sFolder = Dir$
 Loop
-
-
 
 End Sub

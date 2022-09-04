@@ -3,6 +3,7 @@ Option Explicit
 
 
 Global sModPath As Variant
+Global FindTheMods As Variant
 
 Global cCompName    As Variant
 Global cDriveLetter As Variant
@@ -14,6 +15,8 @@ Global ConfigFile As Variant
 Global strFullFilename As String
 Global sMessage As String
 
+Global WhattoMap As String
+Global WheretoMap As String
 
 
 
@@ -115,9 +118,9 @@ On Local Error GoTo MapNetworkDrive_Err
 tUNCname = UNCname
 tPassword = Password
 tDriveLetter = DriveLetter
-If Right$(tUNCname, 1) <> Chr$(0) Then tUNCname = tUNCname & Chr$(0)
-If Right$(tPassword, 1) <> Chr$(0) Then tPassword = tPassword & Chr$(0)
-If Right$(tDriveLetter, 1) <> Chr$(0) Then tDriveLetter = tDriveLetter & Chr$(0)
+'If Right$(tUNCname, 1) <> Chr$(0) Then tUNCname = tUNCname & Chr$(0)
+'If Right$(tPassword, 1) <> Chr$(0) Then tPassword = tPassword & Chr$(0)
+'If Right$(tDriveLetter, 1) <> Chr$(0) Then tDriveLetter = tDriveLetter & Chr$(0)
 status = WNetAddConnection(tUNCname, tPassword, tDriveLetter)
 
 Select Case status
