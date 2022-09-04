@@ -9,6 +9,29 @@ Begin VB.Form Form1
    ScaleHeight     =   8355
    ScaleWidth      =   12915
    StartUpPosition =   2  'CenterScreen
+   Begin VB.CommandButton cmdUpdate 
+      Caption         =   "Update"
+      Height          =   375
+      Left            =   8760
+      TabIndex        =   16
+      Top             =   7560
+      Width           =   1695
+   End
+   Begin VB.CommandButton cmdClose 
+      Caption         =   "Close"
+      Height          =   375
+      Left            =   10800
+      TabIndex        =   15
+      Top             =   7560
+      Width           =   1695
+   End
+   Begin VB.ListBox List1 
+      Height          =   1815
+      Left            =   6360
+      TabIndex        =   14
+      Top             =   4440
+      Width           =   6135
+   End
    Begin VB.CommandButton cmdWrite 
       Caption         =   "Write >>>"
       Height          =   375
@@ -59,7 +82,7 @@ Begin VB.Form Form1
       Width           =   855
    End
    Begin VB.TextBox txtdzmodinfo 
-      Height          =   3975
+      Height          =   3135
       Left            =   6360
       MultiLine       =   -1  'True
       TabIndex        =   3
@@ -164,6 +187,9 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+
+
+
 Private Sub Drive1_Change()
     ' when the drive changes, set the directory box path to the new drive
     On Error GoTo DriveError
@@ -190,6 +216,7 @@ Private Sub cmdNext_Click()
     strFullFilename = Dir1.Path & "\" & File1.List(File1.ListIndex)
     Form1.txtdzmodinfo.Text = Form1.txtdzmodinfo.Text + "Server Mod Path: " & strFullFilename + vbCrLf
     sModPath = strFullFilename
+    Call FindTheModFolders
     ' MsgBox "You selected " & strFullFilename
     Form1.lblServerModLoc.Caption = "DayZ Mod Location - Client"
     Form1.lblClientIP.Visible = True
@@ -206,25 +233,51 @@ End Sub
 Private Sub cmdNext2_Click()
 
 RemoteDrive = Replace(cmbDriveList.Text, ":\", "$")
-'Form1.txtcModPath.Text = "Program Files (x86)\Steam\steamapps\common\DayZ\!Workshop"
-strFullFilename = "\\" + txtcIPAdd.Text + "\" + RemoteDrive + "\" + txtcModPath.Text
-cModPath = strFullFilename
-Form1.txtdzmodinfo.Text = Form1.txtdzmodinfo.Text + "Client Mod Path: " & strFullFilename + vbCrLf
-Form1.cmdNext2.Visible = False
-Form1.cmdWrite.Visible = True
+cDriveLetter = RemoteDrive
+cCompName = txtcIPAdd.Text
 
+'Form1.txtcModPath.Text = "Program Files (x86)\Steam\steamapps\common\DayZ\!Workshop"
+If PingIP(txtcIPAdd.Text) Then
+    strFullFilename = "\\" + txtcIPAdd.Text + "\" + RemoteDrive + "\" + txtcModPath.Text
+    cModPath = strFullFilename
+    Form1.txtdzmodinfo.Text = Form1.txtdzmodinfo.Text + "Client Mod Path: " & strFullFilename + vbCrLf
+    Form1.txtdzmodinfo.Text = Form1.txtdzmodinfo.Text + vbCrLf + vbCrLf + sMessage
+    Form1.cmdNext2.Visible = False
+    Form1.cmdWrite.Visible = True
+Else
+    End
+End If
 
 End Sub
 
 Private Sub cmdWrite_Click()
+   
+    
+ Form1.cmdUpdate.Visible = True
+    
+  
+    
+End Sub
+
+Private Sub cmdClose_Click()
+    
+    Unload Form1
+    Unload Form2
     End
     
 End Sub
 
+Private Sub cmdUpdate_Click()
+    Unload Form1
+    Load Form2
+    End
+    
 
+End Sub
 Private Sub Form_Load()
 
 'ConfigFile = App.Path + "\settings.config"
+sMessage = "Click on Write to Write Configuration to File" + vbCrLf + "Click on Update to open DayZModUpdater" + vbCrLf
 If Not Dir$(App.Path + "\settings.config") = "" Then
     Form1.Visible = False
     Unload Form1
@@ -236,6 +289,7 @@ Else
 
 Form1.txtdzmodinfo.Text = "DayZ Mod Info" + vbCrLf
 Form1.File1.Visible = False
+Form1.cmdUpdate.Visible = False
 
 Form1.lblClientIP.Visible = False
 Form1.txtcIPAdd.Visible = False
@@ -272,5 +326,54 @@ End If
 
 End Sub
 
+Function PingIP(IP)
+    Dim objWMIService
+    Dim colItems
+    Dim objItem
+    Set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
+    Set colItems = objWMIService.ExecQuery("Select * from Win32_PingStatus Where timeout = 1000 and Address='" & IP & "'")
+    For Each objItem In colItems
+        If objItem.StatusCode = 0 Then
+            PingIP = True
+        Else
+            PingIP = False
+        End If
+    Next
+End Function
+
+' **************************************************************
+' Testing Mapping a drive
+
+Private Sub Command1_Click()
+Dim lret
+lret = MapNetworkDrive(Text1, "ABC", Text2, "Sorry")
+End Sub
+
+Private Sub Command2_Click()
+DisconnectNetworkDrive Text2, 1, "Sorry"
+End Sub
+
+Private Sub ThisIsATest()
+Command1.Caption = "Connect Drive"
+Command2.Caption = "Release Drive"
+Text1.Text = "\\LAPTOP\C DRIVE"
+Text2.Text = "U:"
+End Sub
 
 
+' ********************************************************
+Private Sub FindTheModFolders()
+Dim sFolder As String
+sFolder = Dir$(sModPath, vbDirectory)
+Debug.Print sModPath
+Debug.Print sFolder
+Do While sFolder <> ""
+    If InStr(sFolder, "@") <> 0 Then
+        Form1.List1.AddItem (sFolder)
+    End If
+    sFolder = Dir$
+Loop
+
+
+
+End Sub
