@@ -384,3 +384,9 @@ Do While sFolder <> ""
 Loop
 
 End Sub
+
+
+
+Private Sub txtcModPath_GotFocus()
+    txtcModPath = ""
+End Sub
